@@ -1,5 +1,5 @@
 import { OptionalConnection, queryHandler, query } from './connection'
-import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
+import { Product, Sub, CompleteProduct, ProductPrice, Region, Category, Size } from '../models/sub'
 import { PoolConnection } from 'mysql'
 
 
@@ -105,5 +105,56 @@ export function fetchPriceRrpByCodeDb (optionalConnection: OptionalConnection, c
       values: [code, storeId]
     })
     return products
+  })
+}
+
+export function fetchSpecificProductDb(optionalConnection: OptionalConnection, regionId: number, categoryId: number, sizeId: number, productId: number): Promise<Sub[]|null> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const products = await query<Sub[]>(client, {
+      sql: `SELECT * FROM rrp
+      WHERE region_id = ? AND category_id = ? AND size_id = ? AND product_id = ?`,
+      values: [regionId, categoryId, sizeId, productId]
+    })
+    return products
+  })
+}
+
+export function fetchRegionById(optionalConnection: OptionalConnection, regionId: number): Promise<Region[]> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const region = await query<Region>(client, {
+      sql: `SELECT * FROM regions WHERE id = ?`,
+      values: [regionId]
+    })
+    return region
+  })
+}
+
+export function fetchCategoryById(optionalConnection: OptionalConnection, categoryId: number): Promise<Category[]> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const category = await query<Category>(client, {
+      sql: `SELECT * FROM product_categories WHERE id = ?`,
+      values: [categoryId]
+    })
+    return category
+  })
+}
+
+export function fetchSizeById(optionalConnection: OptionalConnection, sizeId: number): Promise<Size[]> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const size = await query<Size>(client, {
+      sql: `SELECT * FROM product_sizes WHERE id = ?`,
+      values: [sizeId]
+    })
+    return size
+  })
+}
+
+export function fetchProductById(optionalConnection: OptionalConnection, productId: number): Promise<Product[]> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const product = await query<Product>(client, {
+      sql: `SELECT * FROM products WHERE id = ?`,
+      values: [productId]
+    })
+    return product
   })
 }

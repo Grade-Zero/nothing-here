@@ -2,7 +2,7 @@ import * as express from 'express'
 import { StandardResponse } from '../models/standard'
 import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
 import { Route, Get, Tags, Query, Post, Request, Body } from 'tsoa'
-import { fetchAllProducts, fetchSubsByStore, fetchSizedProducts, fetchProductByCode, fetchRrpByFullCode, fetchReducedProduct, fetchPriceRrpByCode } from '../services/sub';
+import { fetchAllProducts, fetchSubsByStore, fetchSizedProducts, fetchProductByCode, fetchRrpByFullCode, fetchReducedProduct, fetchPriceRrpByCode, fetchSpecificProduct, fetchCodesByIds } from '../services/sub';
 
 
 @Route('sub')
@@ -74,6 +74,43 @@ export class SubController {
         let data = await fetchPriceRrpByCode(code, storeId)
         return {data, meta: {}}
     }
+
+    // @Get('addFullCode')
+    // @Tags('Open')
+    // public async addFullCode(
+    //     @Query() regionId: number,
+    //     @Query() categoryId: number,
+    //     @Query() sizeId: number,
+    //     @Query() productId: number
+    // ): Promise<StandardResponse<boolean>> {
+    //     let data = await addFullProductCode(regionId, categoryId, sizeId, productId)
+    //     return {data, meta: {}}
+    // }
+
+    @Get('specificProduct')
+    @Tags('Open')
+    public async specificProduct(
+        @Query() regionId: number,
+        @Query() categoryId: number,
+        @Query() sizeId: number,
+        @Query() productId: number
+    ): Promise<StandardResponse<Sub[]|null>> {
+        let data = await fetchSpecificProduct(regionId, categoryId, sizeId, productId)
+        return {data, meta: {}}
+    }
+
+    @Get('code')
+    @Tags('Open')
+    public async code(
+        @Query() regionId: number,
+        @Query() categoryId: number,
+        @Query() sizeId: number,
+        @Query() productId: number
+    ): Promise<StandardResponse<string>> {
+        let data = await fetchCodesByIds(regionId, categoryId, sizeId, productId)
+        return {data, meta: {}}
+    }
+
     // @Get('fetchByid/{id}')
     // @Tags('Open')
     // public async FetchComicById(

@@ -8,6 +8,29 @@ export interface Product {
     sub_sizing: number
 }
 
+export interface Region {
+    id: number,
+    name: string,
+    code: string
+}
+
+export interface Category {
+    id: number,
+    name: string,
+    code: string,
+    parent: number | null,
+    is_promo: number,
+    hidden: number,
+    sub_sizing: number,
+    restricted: number
+}
+
+export interface Size {
+    id: number,
+    name: string,
+    code: string
+}
+
 export interface Sub {
     id: number,
     product_id: number,

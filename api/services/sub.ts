@@ -1,5 +1,5 @@
 import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
-import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb } from '../db/sub'
+import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb, fetchSpecificProductDb, fetchRegionById, fetchCategoryById, fetchSizeById, fetchProductById } from '../db/sub'
 
 export async function fetchAllProducts(): Promise<Product[]> {
     return fetchAllProductsDb(null);
@@ -28,3 +28,21 @@ export async function fetchReducedProduct(categoryCode: string, productCode: str
 export async function fetchPriceRrpByCode(code: string, storeId: number): Promise<ProductPrice[]> {
     return fetchPriceRrpByCodeDb(null, code, storeId)
 }
+
+export async function fetchCodesByIds(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<string> {
+    let region = await fetchRegionById(null, regionId)
+    let category = await fetchCategoryById(null, categoryId)
+    let size = await fetchSizeById(null, sizeId)
+    let product = await fetchProductById(null, productId)
+    let val = region[0].code + '-' + category[0].code + '-' + size[0].code + '-' + product[0].code
+    return val
+}
+
+export async function fetchSpecificProduct(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<Sub[]|null> {
+    let product = await fetchSpecificProductDb(null, regionId, categoryId, sizeId, productId)
+    return product
+}
+
+// export async function addFullProductCode(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<boolean> {
+
+// }
