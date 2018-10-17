@@ -158,3 +158,12 @@ export function fetchProductById(optionalConnection: OptionalConnection, product
     return product
   })
 }
+
+export function updateRrpCode (optionalConnection: OptionalConnection, rrpId: number, code: string): Promise<undefined> {
+  return queryHandler(optionalConnection, async function (connection: PoolConnection) {
+      await query<any>(connection, {
+          sql: `UPDATE rrp SET code = ? WHERE id = ?`,
+          values: [String(code), rrpId]
+      })
+  })
+}

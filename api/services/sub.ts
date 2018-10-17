@@ -1,5 +1,6 @@
+import * as _ from 'lodash'
 import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
-import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb, fetchSpecificProductDb, fetchRegionById, fetchCategoryById, fetchSizeById, fetchProductById } from '../db/sub'
+import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb, fetchSpecificProductDb, fetchRegionById, fetchCategoryById, fetchSizeById, fetchProductById, updateRrpCode } from '../db/sub'
 
 export async function fetchAllProducts(): Promise<Product[]> {
     return fetchAllProductsDb(null);
@@ -29,20 +30,80 @@ export async function fetchPriceRrpByCode(code: string, storeId: number): Promis
     return fetchPriceRrpByCodeDb(null, code, storeId)
 }
 
-export async function fetchCodesByIds(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<string> {
+export async function fetchCodesByIds(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<string|null> {
     let region = await fetchRegionById(null, regionId)
     let category = await fetchCategoryById(null, categoryId)
     let size = await fetchSizeById(null, sizeId)
     let product = await fetchProductById(null, productId)
-    let val = region[0].code + '-' + category[0].code + '-' + size[0].code + '-' + product[0].code
-    return val
+    if (!_.isNil(region) && region.length > 0 && !_.isNil(category) && category.length > 0 && !_.isNil(size) && size.length > 0 && !_.isNil(product) && product.length > 0) {
+        let val = region[0].code + '-' + category[0].code + '-' + size[0].code + '-' + product[0].code
+        return val
+    }
+    return null
 }
 
 export async function fetchSpecificProduct(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<Sub[]|null> {
     let product = await fetchSpecificProductDb(null, regionId, categoryId, sizeId, productId)
+    let code = await fetchCodesByIds(regionId, categoryId, sizeId, productId)
+
     return product
 }
 
-// export async function addFullProductCode(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<boolean> {
+export async function addFullProductCode(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<boolean> {
+    let product = await fetchSpecificProductDb(null, regionId, categoryId, sizeId, productId)
+    let code = await fetchCodesByIds(regionId, categoryId, sizeId, productId)
+    if (!_.isNull(product) && product.length > 0) {
+        console.log('product', product[0])
+        if (!_.isNull(code)) {
+            console.log('No nulls', code)
+            let res = updateRrpCode(null, product[0].id, code)
+        }
+        // return res
+    }
+    return true
+//     } else {
+//         return undefined
+//     }
+}
 
-// }
+export async function updateAllProductsCode(inc: string): Promise<boolean> {
+    let regionId = 1
+    let categoryId = 1
+    let sizeId = 1
+    let productId = 1
+    let done = false
+    for (let i = 0; i < 2000; i++) {
+        await addFullProductCode(regionId, categoryId, sizeId, productId)
+        // if (productId < sizeId) {
+        //     productId++
+        // } else if (sizeId < categoryId) {
+        //     sizeId++
+        // } else if (categoryId < regionId) {
+        //     categoryId++
+        // } else {
+        //     regionId++
+        // }
+        // if (inc === 'product') {
+        //     productId++
+        // } else if (inc === 'size') {
+        //     sizeId++
+        // } else if (inc === 'category') {
+        //     categoryId++
+        // } else {
+        //     regionId++
+        // }
+        regionId = _.random(1, 3)
+        categoryId = _.random(1, 35)
+        sizeId = _.random(1, 2)
+        productId = _.random(1, 150)
+        if (i === 500) {
+            regionId = 1
+            categoryId = 14
+            sizeId = 4
+            productId = 22
+        }
+        // console.log(regionId + '-' + categoryId + '-' + sizeId + '-' + productId)
+    }
+
+    return true
+}

@@ -1,0 +1,7 @@
+node_server
+    src
+        db
+            connection.ts
+
+            draw from config.ts
+            config itself draws from env
