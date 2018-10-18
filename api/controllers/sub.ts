@@ -79,7 +79,7 @@ export class SubController {
     public async fetchPriceRrpByCode(
         @Query() code: string,
         @Query() storeId: number
-    ): Promise<StandardResponse<ProductPrice[]>> {
+    ): Promise<StandardResponse<ProductPrice>> {
         let data = await fetchPriceRrpByCode(code, storeId)
         return {data, meta: {}}
     }
@@ -120,14 +120,17 @@ export class SubController {
         return {data, meta: {}}
     }
 
-    @Get('allProductsAddCode')
-    @Tags('Open')
-    public async allProductsCode(
-        @Query() inc: string
-    ): Promise<StandardResponse<boolean>> {
-        let data = await updateAllProductsCode(inc)
-        return {data, meta: {}}
-    }
+    // @Get('singleProductAddCode')
+    // @Tags('Open')
+    // public async singleProductAddCode(
+    //     @Query() regionCode: string,
+    //     @Query() categoryCode: string,
+    //     @Query() sizeCode: string,
+    //     @Query() productCode: string
+    // ): Promise<StandardResponse<boolean>> {
+    //     let data = await updateSingleProductCode(regionCode, categoryCode, sizeCode, productCode)
+    //     return {data, meta: {}}
+    // }
 
     @Get('productsAddCode')
     @Tags('Open')

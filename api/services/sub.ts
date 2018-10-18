@@ -26,8 +26,13 @@ export async function fetchReducedProduct(categoryCode: string, productCode: str
     return fetchReducedProductDb(null, categoryCode, productCode, storeId)
 }
 
-export async function fetchPriceRrpByCode(code: string, storeId: number): Promise<ProductPrice[]> {
-    return fetchPriceRrpByCodeDb(null, code, storeId)
+export async function fetchPriceRrpByCode(code: string, storeId: number): Promise<ProductPrice> {
+    let product: ProductPrice = await fetchPriceRrpByCodeDb(null, code, storeId)
+    product = {...product, rrp: Number(product.rrp).toFixed(2)}
+    if (product.price) {
+        product = {...product, price: Number(product.price).toFixed(2)}
+    }
+    return product
 }
 
 export async function fetchCodesByIds(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<string|null> {
@@ -98,6 +103,12 @@ export async function updateProductsCode(start: number): Promise<boolean> {
 export async function fetchRrpById(id: number): Promise<Sub|null> {
     let product = await fetchRrpByIdDb(null, id)
     return product
+}
+
+export async function updateSingleProductCode(regionCode: string, categoryCode: string, sizeCode: string, productCode: string): Promise<boolean> {
+    // let rrp = await fetchRrpByCodes(regionCode, categoryCode, sizeCode, productCode)
+    // await addFullProductCode(regionCode, categoryCode, sizeCode, productCode)
+    return true
 }
 
 export async function updateAllProductsCode(inc: string): Promise<boolean> {

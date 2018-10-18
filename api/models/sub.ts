@@ -84,6 +84,6 @@ export interface CompleteProduct {
 }
 
 export interface ProductPrice {
-    rrp: number,
-    price: null | number
+    rrp: number | string,
+    price: null | number | string
 }

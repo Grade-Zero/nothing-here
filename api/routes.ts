@@ -97,13 +97,13 @@ const models: TsoaRoute.Models = {
     },
     "ProductPrice": {
         "properties": {
-            "rrp": { "dataType": "double", "required": true },
+            "rrp": { "dataType": "object", "required": true },
             "price": { "dataType": "object", "required": true },
         },
     },
-    "StandardResponseProductPrice[]": {
+    "StandardResponseProductPrice": {
         "properties": {
-            "data": { "dataType": "array", "array": { "ref": "ProductPrice" }, "required": true },
+            "data": { "ref": "ProductPrice", "required": true },
             "meta": { "dataType": "any", "required": true },
         },
     },
@@ -388,25 +388,6 @@ export function RegisterRoutes(app: any) {
 
 
             const promise = controller.code.apply(controller, validatedArgs);
-            promiseHandler(controller, promise, response, next);
-        });
-    app.get('/v1/sub/allProductsAddCode',
-        function(request: any, response: any, next: any) {
-            const args = {
-                inc: { "in": "query", "name": "inc", "required": true, "dataType": "string" },
-            };
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = getValidatedArgs(args, request);
-            } catch (err) {
-                return next(err);
-            }
-
-            const controller = new SubController();
-
-
-            const promise = controller.allProductsCode.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
     app.get('/v1/sub/productsAddCode',

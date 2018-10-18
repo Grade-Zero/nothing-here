@@ -88,6 +88,19 @@ export function fetchRrpByIdDb (optionalConnection: OptionalConnection, id: numb
   })
 }
 
+export function fetchRrpByCodes (optionalConnection: OptionalConnection, regionCode: string, categoryCode: string, sizeCode: string|null, productCode: string): Promise<Sub> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    // let sql = `SELECT * FROM rrp WHERE region`
+    // if (!_.isNull(sizeCode) {
+    //   sql =
+    // }
+    const product = await query<Sub[]>(client, {
+      sql: `SELECT * FROM rrp WHERE `
+    })
+    return extractSingle<Sub>(product)
+  })
+}
+
 export function fetchReducedProductDb (optionalConnection: OptionalConnection, categoryCode: string, productCode: string, storeId: number): Promise<CompleteProduct[]> {
   return queryHandler(optionalConnection, async function(client: PoolConnection) {
     const products = await query<Sub[]>(client, {
