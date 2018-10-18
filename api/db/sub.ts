@@ -1,4 +1,4 @@
-import { OptionalConnection, queryHandler, query } from './connection'
+import { OptionalConnection, queryHandler, query, extractSingle } from './connection'
 import { Product, Sub, CompleteProduct, ProductPrice, Region, Category, Size } from '../models/sub'
 import { PoolConnection } from 'mysql'
 
@@ -78,6 +78,16 @@ export function fetchRrpByFullCodeDb (optionalConnection: OptionalConnection, co
     })
 }
 
+export function fetchRrpByIdDb (optionalConnection: OptionalConnection, id: number): Promise<Sub> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const product = await query<Sub[]>(client, {
+      sql: `SELECT * FROM rrp WHERE id = ?`,
+      values: [id]
+    })
+    return extractSingle<Sub>(product)
+  })
+}
+
 export function fetchReducedProductDb (optionalConnection: OptionalConnection, categoryCode: string, productCode: string, storeId: number): Promise<CompleteProduct[]> {
   return queryHandler(optionalConnection, async function(client: PoolConnection) {
     const products = await query<Sub[]>(client, {
@@ -95,7 +105,7 @@ export function fetchReducedProductDb (optionalConnection: OptionalConnection, c
   })
 }
 
-export function fetchPriceRrpByCodeDb (optionalConnection: OptionalConnection, code: string, storeId: number): Promise<ProductPrice[]> {
+export function fetchPriceRrpByCodeDb (optionalConnection: OptionalConnection, code: string, storeId: number): Promise<ProductPrice> {
   return queryHandler(optionalConnection, async function(client: PoolConnection) {
     const products = await query<ProductPrice[]>(client, {
       sql: `SELECT r.rrp, p.custom_price AS price FROM rrp as r
@@ -104,7 +114,7 @@ export function fetchPriceRrpByCodeDb (optionalConnection: OptionalConnection, c
       AND p.store_id = ?`,
       values: [code, storeId]
     })
-    return products
+    return extractSingle<ProductPrice>(products)
   })
 }
 

@@ -2,7 +2,7 @@ import * as express from 'express'
 import { StandardResponse } from '../models/standard'
 import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
 import { Route, Get, Tags, Query, Post, Request, Body } from 'tsoa'
-import { fetchAllProducts, fetchSubsByStore, fetchSizedProducts, fetchProductByCode, fetchRrpByFullCode, fetchReducedProduct, fetchPriceRrpByCode, fetchSpecificProduct, fetchCodesByIds, addFullProductCode, updateAllProductsCode } from '../services/sub';
+import { fetchAllProducts, fetchSubsByStore, fetchSizedProducts, fetchProductByCode, fetchRrpByFullCode, fetchReducedProduct, fetchPriceRrpByCode, fetchSpecificProduct, fetchCodesByIds, addFullProductCode, updateAllProductsCode, updateProductsCode, fetchRrpById } from '../services/sub';
 
 
 @Route('sub')
@@ -51,6 +51,15 @@ export class SubController {
         @Query() code: string
     ): Promise<StandardResponse<CompleteProduct[]>> {
         let data = await fetchRrpByFullCode(code)
+        return {data, meta: {}}
+    }
+
+    @Get('rrpById')
+    @Tags('Open')
+    public async RrpById(
+        @Query() id: number
+    ): Promise<StandardResponse<Sub|null>> {
+        let data = await fetchRrpById(id)
         return {data, meta: {}}
     }
 
@@ -120,6 +129,14 @@ export class SubController {
         return {data, meta: {}}
     }
 
+    @Get('productsAddCode')
+    @Tags('Open')
+    public async productsCode(
+        @Query() start: number
+    ): Promise<StandardResponse<boolean>> {
+        let data = await updateProductsCode(start)
+        return {data, meta: {}}
+    }
     // @Get('fetchByid/{id}')
     // @Tags('Open')
     // public async FetchComicById(

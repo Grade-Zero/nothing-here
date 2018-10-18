@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
-import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb, fetchSpecificProductDb, fetchRegionById, fetchCategoryById, fetchSizeById, fetchProductById, updateRrpCode } from '../db/sub'
+import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb, fetchSpecificProductDb, fetchRegionById, fetchCategoryById, fetchSizeById, fetchProductById, updateRrpCode, fetchRrpByIdDb } from '../db/sub'
 
 export async function fetchAllProducts(): Promise<Product[]> {
     return fetchAllProductsDb(null);
@@ -35,11 +35,27 @@ export async function fetchCodesByIds(regionId: number, categoryId: number, size
     let category = await fetchCategoryById(null, categoryId)
     let size = await fetchSizeById(null, sizeId)
     let product = await fetchProductById(null, productId)
-    if (!_.isNil(region) && region.length > 0 && !_.isNil(category) && category.length > 0 && !_.isNil(size) && size.length > 0 && !_.isNil(product) && product.length > 0) {
-        let val = region[0].code + '-' + category[0].code + '-' + size[0].code + '-' + product[0].code
-        return val
+    let val: string|null = ''
+    if (!_.isNil(region) && region.length > 0) {
+        val += region[0].code + '-'
     }
-    return null
+    if (!_.isNil(category) && category.length > 0) {
+        val += category[0].code + '-'
+    }
+    if (!_.isNil(size) && size.length > 0) {
+        val += size[0].code + '-'
+    }
+    if (!_.isNil(product) && product.length > 0) {
+        val += product[0].code
+    }
+    if (val.length < 1) {
+        val = null
+    }
+    // if (!_.isNil(region) && region.length > 0 && !_.isNil(category) && category.length > 0 && !_.isNil(size) && size.length > 0 && !_.isNil(product) && product.length > 0) {
+    //     let val = region[0].code + '-' + category[0].code + '-' + size[0].code + '-' + product[0].code
+    //     return val
+    // }
+    return val
 }
 
 export async function fetchSpecificProduct(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<Sub[]|null> {
@@ -53,9 +69,7 @@ export async function addFullProductCode(regionId: number, categoryId: number, s
     let product = await fetchSpecificProductDb(null, regionId, categoryId, sizeId, productId)
     let code = await fetchCodesByIds(regionId, categoryId, sizeId, productId)
     if (!_.isNull(product) && product.length > 0) {
-        console.log('product', product[0])
         if (!_.isNull(code)) {
-            console.log('No nulls', code)
             let res = updateRrpCode(null, product[0].id, code)
         }
         // return res
@@ -64,6 +78,26 @@ export async function addFullProductCode(regionId: number, categoryId: number, s
 //     } else {
 //         return undefined
 //     }
+}
+
+export async function updateProductsCode(start: number): Promise<boolean> {
+    for (let i = start; i < (start + 100); i++) {
+        let rrpRow: Sub = await fetchRrpByIdDb(null, i)
+        if (!_.isNull(rrpRow)) {
+            if (_.isNull(rrpRow.code)) {
+                let code = await fetchCodesByIds(rrpRow.region_id, rrpRow.category_id, rrpRow.size_id, rrpRow.product_id)
+                if (!_.isNull(code)) {
+                    let res = updateRrpCode(null, rrpRow.id, code)
+                }
+            }
+        }
+    }
+    return true
+}
+
+export async function fetchRrpById(id: number): Promise<Sub|null> {
+    let product = await fetchRrpByIdDb(null, id)
+    return product
 }
 
 export async function updateAllProductsCode(inc: string): Promise<boolean> {

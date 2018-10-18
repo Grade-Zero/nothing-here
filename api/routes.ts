@@ -26,6 +26,7 @@ const models: TsoaRoute.Models = {
     "Sub": {
         "properties": {
             "id": { "dataType": "double", "required": true },
+            "code": { "dataType": "string", "required": true },
             "product_id": { "dataType": "double", "required": true },
             "category_id": { "dataType": "double", "required": true },
             "size_id": { "dataType": "double", "required": true },
@@ -88,6 +89,12 @@ const models: TsoaRoute.Models = {
             "meta": { "dataType": "any", "required": true },
         },
     },
+    "StandardResponseobject": {
+        "properties": {
+            "data": { "dataType": "object", "required": true },
+            "meta": { "dataType": "any", "required": true },
+        },
+    },
     "ProductPrice": {
         "properties": {
             "rrp": { "dataType": "double", "required": true },
@@ -103,12 +110,6 @@ const models: TsoaRoute.Models = {
     "StandardResponseboolean": {
         "properties": {
             "data": { "dataType": "boolean", "required": true },
-            "meta": { "dataType": "any", "required": true },
-        },
-    },
-    "StandardResponseobject": {
-        "properties": {
-            "data": { "dataType": "object", "required": true },
             "meta": { "dataType": "any", "required": true },
         },
     },
@@ -263,6 +264,25 @@ export function RegisterRoutes(app: any) {
             const promise = controller.RrpByFullCode.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
+    app.get('/v1/sub/rrpById',
+        function(request: any, response: any, next: any) {
+            const args = {
+                id: { "in": "query", "name": "id", "required": true, "dataType": "double" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new SubController();
+
+
+            const promise = controller.RrpById.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
     app.get('/v1/sub/productByCodeReduced',
         function(request: any, response: any, next: any) {
             const args = {
@@ -387,6 +407,25 @@ export function RegisterRoutes(app: any) {
 
 
             const promise = controller.allProductsCode.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.get('/v1/sub/productsAddCode',
+        function(request: any, response: any, next: any) {
+            const args = {
+                start: { "in": "query", "name": "start", "required": true, "dataType": "double" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new SubController();
+
+
+            const promise = controller.productsCode.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
     app.post('/v1/authentication/login',

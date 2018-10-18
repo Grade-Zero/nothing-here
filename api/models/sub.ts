@@ -33,6 +33,7 @@ export interface Size {
 
 export interface Sub {
     id: number,
+    code: string,
     product_id: number,
     category_id: number,
     size_id: number,
