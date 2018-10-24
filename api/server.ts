@@ -15,6 +15,7 @@ import { getEnumValues } from './utils/typescript';
 export async function boot() {
   const app = express()
   app.use(helmet())
+  app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json({defaultCharset: 'utf-8'}))
   app.use(cookieParser(config.secrets.cookie))
   app.use('/docs', express.static(__dirname + '/swagger-ui'));

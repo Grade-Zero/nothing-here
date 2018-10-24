@@ -1,9 +1,7 @@
 import { combineReducers } from 'redux'
-import comic from './comic/reducer'
 import sub from './sub/reducer'
 
 let reducers = {
-    comic,
     sub
 }
 

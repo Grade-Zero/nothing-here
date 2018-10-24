@@ -1,8 +1,8 @@
 import * as express from 'express'
 import { StandardResponse } from '../models/standard'
-import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
+import { Product, Sub, CompleteProduct, ProductPrice, PostFetch } from '../models/sub'
 import { Route, Get, Tags, Query, Post, Request, Body } from 'tsoa'
-import { fetchAllProducts, fetchSubsByStore, fetchSizedProducts, fetchProductByCode, fetchRrpByFullCode, fetchReducedProduct, fetchPriceRrpByCode, fetchSpecificProduct, fetchCodesByIds, addFullProductCode, updateAllProductsCode, updateProductsCode, fetchRrpById } from '../services/sub';
+import { fetchAllProducts, fetchSubsByStore, fetchSizedProducts, fetchProductByCode, fetchRrpByFullCode, fetchReducedProduct, fetchPriceRrpByCode, fetchSpecificProduct, fetchCodesByIds, addFullProductCode, updateAllProductsCode, updateProductsCode, fetchRrpById, fetchPriceRrpByCodeStoreName, fetchProductPrices } from '../services/sub';
 
 
 @Route('sub')
@@ -82,6 +82,27 @@ export class SubController {
     ): Promise<StandardResponse<ProductPrice>> {
         let data = await fetchPriceRrpByCode(code, storeId)
         return {data, meta: {}}
+    }
+
+    @Get('productPriceRrpByCodeStoreName')
+    @Tags('Open')
+    public async fetchPriceRrpByCodeStoreName(
+        @Query() code: string,
+        @Query() storeName: string
+    ): Promise<StandardResponse<ProductPrice>> {
+        let data = await fetchPriceRrpByCodeStoreName(code, storeName)
+        return {data, meta: {}}
+    }
+
+    @Post('productPrices')
+    @Tags('Open')
+    public async fetchProductsPrices(
+        @Request() request: express.Request,
+        @Body() body: PostFetch,
+    ): Promise<ProductPrice[]> {
+        // let prices = await fetchProductPrices(body)
+        return await fetchProductPrices(body)
+        // return {data: prices, meta: {}}
     }
 
     @Get('addFullCode')

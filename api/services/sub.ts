@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
-import { Product, Sub, CompleteProduct, ProductPrice } from '../models/sub'
-import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb, fetchSpecificProductDb, fetchRegionById, fetchCategoryById, fetchSizeById, fetchProductById, updateRrpCode, fetchRrpByIdDb } from '../db/sub'
+import { Product, Sub, CompleteProduct, ProductPrice, Device, PostFetch } from '../models/sub'
+import { fetchAllProductsDb, fetchSubsByStoreDb, fetchSizedProductsDb, fetchProductByCodeDb, fetchRrpByFullCodeDb, fetchReducedProductDb, fetchPriceRrpByCodeDb, fetchSpecificProductDb, fetchRegionById, fetchCategoryById, fetchSizeById, fetchProductById, updateRrpCode, fetchRrpByIdDb, fetchStoreIdByNameDb } from '../db/sub'
 
 export async function fetchAllProducts(): Promise<Product[]> {
     return fetchAllProductsDb(null);
@@ -26,13 +26,35 @@ export async function fetchReducedProduct(categoryCode: string, productCode: str
     return fetchReducedProductDb(null, categoryCode, productCode, storeId)
 }
 
+export async function fetchStoreIdByName(storeName: string): Promise<Device> {
+    return fetchStoreIdByNameDb(null, storeName)
+}
+
 export async function fetchPriceRrpByCode(code: string, storeId: number): Promise<ProductPrice> {
     let product: ProductPrice = await fetchPriceRrpByCodeDb(null, code, storeId)
     product = {...product, rrp: Number(product.rrp).toFixed(2)}
     if (product.price) {
         product = {...product, price: Number(product.price).toFixed(2)}
+    } else {
+        product = {...product, price: Number(product.rrp).toFixed(2)}
     }
     return product
+}
+
+export async function fetchPriceRrpByCodeStoreName(code: string, storeName: string): Promise<ProductPrice> {
+    let store: Device = await fetchStoreIdByName(storeName)
+    let product = await fetchPriceRrpByCode(code, store.store_id)
+    return product
+}
+
+export async function fetchProductPrices(body: PostFetch): Promise<ProductPrice[]> {
+    let store: Device = await fetchStoreIdByName(body.name)
+    let prices = []
+    for (let i = 0; i < body.codes.length; i++) {
+        let product = await fetchPriceRrpByCode(body.codes[i], store.store_id)
+        prices.push(product)
+    }
+    return prices
 }
 
 export async function fetchCodesByIds(regionId: number, categoryId: number, sizeId: number, productId: number): Promise<string|null> {

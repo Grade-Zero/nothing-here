@@ -21,20 +21,6 @@ export class App extends React.Component<ComponentProps, typeof defaultState> {
         this.state = defaultState
     }
 
-    // componentWillMount() {
-    //     this.setState({loading: true}, async () => {
-    //         // await this.props.load()
-    //         this.setState({loading: false})
-    //     })
-    // }
-
-    // fetchComic() {
-    //     this.setState({loading: true}, async () => {
-    //         // await this.props.load()
-    //         this.setState({loading: false})
-    //     })
-    // }
-
     public render() {
         return (
             <div>
@@ -45,9 +31,8 @@ export class App extends React.Component<ComponentProps, typeof defaultState> {
                  ) : (
                      <div>
                         {(<Switch>
-                            <Route path={ClientRoutes.products} component={ProductsContainer} />
-                            <Route path={ClientRoutes.comics} component={ComicsContainer} />
-                            <Redirect to={ClientRoutes.comics} />
+                            <Route path={ClientRoutes.default} component={HomeContainer} />
+                            <Redirect to={ClientRoutes.default} />
                         </Switch>)}
                     </div>
                  )}

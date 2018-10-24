@@ -1,6 +1,7 @@
 /* tslint:disable */
 import { Controller, ValidateParam, FieldErrors, ValidateError, TsoaRoute } from 'tsoa';
 import { SubController } from './controllers/sub';
+import { CardController } from './controllers/card';
 import { AuthenticationController } from './controllers/authentication';
 import { UserController } from './controllers/user';
 import { expressAuthentication } from './utils/authentication';
@@ -105,6 +106,12 @@ const models: TsoaRoute.Models = {
         "properties": {
             "data": { "ref": "ProductPrice", "required": true },
             "meta": { "dataType": "any", "required": true },
+        },
+    },
+    "PostFetch": {
+        "properties": {
+            "name": { "dataType": "string", "required": true },
+            "codes": { "dataType": "array", "array": { "dataType": "string" }, "required": true },
         },
     },
     "StandardResponseboolean": {
@@ -324,6 +331,46 @@ export function RegisterRoutes(app: any) {
             const promise = controller.fetchPriceRrpByCode.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
+    app.get('/v1/sub/productPriceRrpByCodeStoreName',
+        function(request: any, response: any, next: any) {
+            const args = {
+                code: { "in": "query", "name": "code", "required": true, "dataType": "string" },
+                storeName: { "in": "query", "name": "storeName", "required": true, "dataType": "string" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new SubController();
+
+
+            const promise = controller.fetchPriceRrpByCodeStoreName.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/v1/sub/productPrices',
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                body: { "in": "body", "name": "body", "required": true, "ref": "PostFetch" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new SubController();
+
+
+            const promise = controller.fetchProductsPrices.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
     app.get('/v1/sub/addFullCode',
         function(request: any, response: any, next: any) {
             const args = {
@@ -407,6 +454,26 @@ export function RegisterRoutes(app: any) {
 
 
             const promise = controller.productsCode.apply(controller, validatedArgs);
+            promiseHandler(controller, promise, response, next);
+        });
+    app.post('/v1/card/productPrices',
+        function(request: any, response: any, next: any) {
+            const args = {
+                request: { "in": "request", "name": "request", "required": true, "dataType": "object" },
+                body: { "in": "body", "name": "body", "required": true, "ref": "PostFetch" },
+            };
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = getValidatedArgs(args, request);
+            } catch (err) {
+                return next(err);
+            }
+
+            const controller = new CardController();
+
+
+            const promise = controller.fetchProductsPrices.apply(controller, validatedArgs);
             promiseHandler(controller, promise, response, next);
         });
     app.post('/v1/authentication/login',

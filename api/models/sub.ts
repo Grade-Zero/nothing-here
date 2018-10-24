@@ -87,3 +87,35 @@ export interface ProductPrice {
     rrp: number | string,
     price: null | number | string
 }
+
+export interface Store {
+    id: number,
+    name: string,
+    store_number?: string,
+    region: number,
+    subregion: number,
+    device_id?: string,
+    full_address?: string,
+    suburb?: string,
+    state?: string,
+    postcode?: string,
+    option?: number,
+    direction?: number,
+    tag_drinks?: number,
+    tag_breakfast_drinks?: number,
+    tag_breakfast_offer?: number,
+    tag_smoothies?: number,
+    franchise?: number,
+    suspended: number
+}
+
+export interface Device {
+    id: number,
+    store_id: number,
+    device_name: string
+}
+
+export interface PostFetch {
+    name: string,
+    codes: string[]
+}

@@ -1,5 +1,5 @@
 import { OptionalConnection, queryHandler, query, extractSingle } from './connection'
-import { Product, Sub, CompleteProduct, ProductPrice, Region, Category, Size } from '../models/sub'
+import { Product, Sub, CompleteProduct, ProductPrice, Region, Category, Size, Device } from '../models/sub'
 import { PoolConnection } from 'mysql'
 
 
@@ -131,6 +131,19 @@ export function fetchPriceRrpByCodeDb (optionalConnection: OptionalConnection, c
   })
 }
 
+export function fetchPriceRrpByCodeStoreNameDb (optionalConnection: OptionalConnection, code: string, storeName: string): Promise<ProductPrice> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const products = await query<ProductPrice[]>(client, {
+      sql: `SELECT r.rrp, p.custom_price AS price FROM rrp as r
+      RIGHT JOIN price as p ON p.rrp_id = r.id
+      WHERE r.code = ?
+      AND p.store_id = ?`,
+      values: [code, storeName]
+    })
+    return extractSingle<ProductPrice>(products)
+  })
+}
+
 export function fetchSpecificProductDb(optionalConnection: OptionalConnection, regionId: number, categoryId: number, sizeId: number, productId: number): Promise<Sub[]|null> {
   return queryHandler(optionalConnection, async function(client: PoolConnection) {
     const products = await query<Sub[]>(client, {
@@ -139,6 +152,16 @@ export function fetchSpecificProductDb(optionalConnection: OptionalConnection, r
       values: [regionId, categoryId, sizeId, productId]
     })
     return products
+  })
+}
+
+export function fetchStoreIdByNameDb(optionalConnection: OptionalConnection, storeName: string): Promise<Device> {
+  return queryHandler(optionalConnection, async function(client: PoolConnection) {
+    const devices = await query<Device[]>(client, {
+      sql: `SELECT * FROM store_devices WHERE device_name = ?`,
+      values: [storeName]
+    })
+    return extractSingle<Device>(devices)
   })
 }
 
