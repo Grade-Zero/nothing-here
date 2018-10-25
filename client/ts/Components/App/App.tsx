@@ -2,13 +2,9 @@ import * as React from 'react'
 import { ComponentProps } from './AppContainer'
 import HeaderContainer from '../Header/HeaderContainer'
 import HomeContainer from '../Home/HomeContainer'
-import ComicsContainer from '../Comics/ComicsContainer'
-import ComicContainer from '../Comic/ComicContainer'
 import { Loading } from '../Loading/Loading'
-import { Comic } from '../Comic/Comic'
-import { Switch, Route, Redirect } from 'react-router-dom';
-import { ClientRoutes } from '../../../../api/enum';
-import ProductsContainer from '../Products/ProductsContainer';
+import { Switch, Route, Redirect } from 'react-router-dom'
+import { ClientRoutes } from '../../../../api/enum'
 
 const defaultState = {
     loading: false
@@ -36,7 +32,6 @@ export class App extends React.Component<ComponentProps, typeof defaultState> {
                         </Switch>)}
                     </div>
                  )}
-                 {/* <ProductsContainer /> */}
             </div>
         )
     }
